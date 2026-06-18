@@ -14,17 +14,13 @@ function isValidEmail(email) {
   return /^\S+@\S+\.\S+$/.test(String(email || '').trim())
 }
 
-function requireTrimmed(value) {
-  return String(value ?? '').trim()
-}
-
 app.post('/api/enquiry', async (req, res) => {
-  const body = req.body || {}
+  const body = req.body
   const { name, email, phone } = body
 
-  const cleanName = requireTrimmed(name)
-  const cleanEmail = requireTrimmed(email)
-  const cleanPhone = requireTrimmed(phone)
+  const cleanName = name.trim()
+  const cleanEmail = email.trim()
+  const cleanPhone = phone.trim()
 
   const phoneDigits = cleanPhone.replace(/\D/g, '')
 

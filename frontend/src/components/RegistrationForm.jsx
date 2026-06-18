@@ -21,14 +21,14 @@ export default function RegistrationForm() {
   const [phone, setPhone] = useState('')
 
   const [loading, setLoading] = useState(false)
-  const [toast, setToast] = useState(null) // {type:'success'|'error', message:''}
+  const [toast, setToast] = useState(null)
 
   const isValid = useMemo(() => {
-    return name.trim().length >= 2 && isValidEmail(email) && isValidPhone(phone)
+    return name.trim().length > 1 && isValidEmail(email) && isValidPhone(phone)
   }, [name, email, phone])
 
   async function onSubmit(e) {
-    e.preventDefault()
+    e.preventDefault() 
     if (!isValid || loading) return
 
     setLoading(true)
