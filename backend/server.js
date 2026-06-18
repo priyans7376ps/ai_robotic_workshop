@@ -14,6 +14,12 @@ function isValidEmail(email) {
   return /^\S+@\S+\.\S+$/.test(String(email || '').trim())
 }
 
+app.get('/', (req,res)=>{
+  res.send({
+    message: "Backend is up"
+  })
+})
+
 app.post('/api/enquiry', async (req, res) => {
   const body = req.body
   const { name, email, phone } = body
