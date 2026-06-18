@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: ensure body takes full height and removes default margin */
+html,
+body {
+  height: 100%;
+}
+
