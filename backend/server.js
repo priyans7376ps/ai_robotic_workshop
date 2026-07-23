@@ -5,28 +5,40 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      process.env.FRONTEND_URL,
+    ].filter(Boolean),
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
-app.get("/api/health", (req, res) => {
-  res.json({ ok: true });
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Backend is up"
+  });
 });
+
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true
+  });
+});
+
 
 function isValidEmail(email) {
   return /^\S+@\S+\.\S+$/.test(String(email || "").trim());
 }
 
-app.get("/", (req, res) => {
-  res.send({
-    message: "Backend is up"
-  });
-});
 
 app.post("/api/enquiry", (req, res) => {
+
   const { name, email, phone } = req.body;
 
   const cleanName = (name || "").trim();
@@ -35,37 +47,45 @@ app.post("/api/enquiry", (req, res) => {
 
   const phoneDigits = cleanPhone.replace(/\D/g, "");
 
+
   console.log("POST /api/enquiry:", req.body);
+
 
   if (!cleanName || cleanName.length < 2) {
     return res.status(400).json({
-      success: false,
-      message: "Name is invalid"
+      success:false,
+      message:"Name is invalid"
     });
   }
+
 
   if (!cleanEmail || !isValidEmail(cleanEmail)) {
     return res.status(400).json({
-      success: false,
-      message: "Email is invalid"
+      success:false,
+      message:"Email is invalid"
     });
   }
+
 
   if (!cleanPhone || phoneDigits.length < 10) {
     return res.status(400).json({
-      success: false,
-      message: "Phone number is invalid"
+      success:false,
+      message:"Phone number is invalid"
     });
   }
 
+
   return res.json({
-    success: true,
-    message: "Enquiry submitted successfully"
+    success:true,
+    message:"Enquiry submitted successfully"
   });
+
 });
+
 
 const PORT = process.env.PORT || 5000;
 
+
 app.listen(PORT, () => {
-  console.log(`🚀 Backend running on http://localhost:${PORT}`);
+  console.log(`🚀 Backend running on port ${PORT}`);
 });
