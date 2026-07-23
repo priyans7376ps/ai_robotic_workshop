@@ -1,58 +1,71 @@
-const express = require('express')
-const cors = require('cors')
+require("dotenv").config();
 
-const app = express()
+const express = require("express");
+const cors = require("cors");
 
-app.use(cors())
-app.use(express.json())
+const app = express();
 
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true })
-})
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
+app.use(express.json());
+
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true });
+});
 
 function isValidEmail(email) {
-  return /^\S+@\S+\.\S+$/.test(String(email || '').trim())
+  return /^\S+@\S+\.\S+$/.test(String(email || "").trim());
 }
 
-app.get('/', (req,res)=>{
+app.get("/", (req, res) => {
   res.send({
     message: "Backend is up"
-  })
-})
+  });
+});
 
-app.post('/api/enquiry', async (req, res) => {
-  const body = req.body
-  const { name, email, phone } = body
+app.post("/api/enquiry", (req, res) => {
+  const { name, email, phone } = req.body;
 
-  const cleanName = name.trim()
-  const cleanEmail = email.trim()
-  const cleanPhone = phone.trim()
+  const cleanName = (name || "").trim();
+  const cleanEmail = (email || "").trim();
+  const cleanPhone = (phone || "").trim();
 
-  const phoneDigits = cleanPhone.replace(/\D/g, '')
+  const phoneDigits = cleanPhone.replace(/\D/g, "");
 
-  // Debug log (remove later if desired)
-  // eslint-disable-next-line no-console
-  console.log('POST /api/enquiry body=', body)
+  console.log("POST /api/enquiry:", req.body);
 
   if (!cleanName || cleanName.length < 2) {
-    return res.status(400).json({ success: false, message: 'All fields are required', detail: 'name invalid' })
-  }
-  if (!cleanEmail || !isValidEmail(cleanEmail)) {
-    return res.status(400).json({ success: false, message: 'All fields are required', detail: 'email invalid' })
-  }
-  if (!cleanPhone || phoneDigits.length < 10) {
-    return res.status(400).json({ success: false, message: 'All fields are required', detail: 'phone invalid' })
+    return res.status(400).json({
+      success: false,
+      message: "Name is invalid"
+    });
   }
 
+  if (!cleanEmail || !isValidEmail(cleanEmail)) {
+    return res.status(400).json({
+      success: false,
+      message: "Email is invalid"
+    });
+  }
+
+  if (!cleanPhone || phoneDigits.length < 10) {
+    return res.status(400).json({
+      success: false,
+      message: "Phone number is invalid"
+    });
+  }
 
   return res.json({
     success: true,
-    message: 'Enquiry submitted successfully'
-  })
-})
+    message: "Enquiry submitted successfully"
+  });
+});
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`)
-})
-
+  console.log(`🚀 Backend running on http://localhost:${PORT}`);
+});
